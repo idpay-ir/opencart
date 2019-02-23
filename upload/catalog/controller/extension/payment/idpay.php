@@ -29,7 +29,10 @@ class ControllerExtensionPaymentIdpay extends Controller
         $this->load->language('extension/payment/idpay');
 
         $this->load->model('checkout/order');
-        $order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
+        /** @var \ModelCheckoutOrder $model */
+        $model = $this->model_checkout_order;
+        $order_id  = $this->session->data['order_id'];
+        $order_info = $model->getOrder($order_id);
 
         $data['return'] = $this->url->link('checkout/success', '', true);
         $data['cancel_return'] = $this->url->link('checkout/payment', '', true);
@@ -48,7 +51,7 @@ class ControllerExtensionPaymentIdpay extends Controller
         }
 
         $idpay_data = array(
-            'order_id' => $this->session->data['order_id'],
+            'order_id' => $order_id,
             'amount' => $amount,
             'phone' => isset($order_info['telephone']) ? $order_info['telephone'] : "",
             'desc' => $desc,
@@ -72,6 +75,10 @@ class ControllerExtensionPaymentIdpay extends Controller
         if ($http_status != 201 || empty($result) || empty($result->id) || empty($result->link)) {
             $json['error'] = sprintf('خطا هنگام ایجاد تراکنش. کد خطا: %s', $http_status);
         } else {
+            // Add a specific history to the order with order status 1 (Pending);
+            $model->addOrderHistory($order_id, 1, 'IDPay Transaction ID: '. $result->id, false);
+            $model->addOrderHistory($order_id, 1, 'در حال هدایت به درگاه پرداخت آیدی پی', false);
+
             $data['action'] = $result->link;
             $json['success'] = $data['action'];
         }
