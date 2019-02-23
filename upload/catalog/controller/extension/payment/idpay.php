@@ -73,7 +73,7 @@ class ControllerExtensionPaymentIdpay extends Controller
         curl_close($ch);
 
         if ($http_status != 201 || empty($result) || empty($result->id) || empty($result->link)) {
-            $json['error'] = sprintf('خطا هنگام ایجاد تراکنش. کد خطا: %s', $http_status);
+            $json['error'] = sprintf('خطا هنگام ایجاد تراکنش. وضعیت خطا: %s - کد خطا: %s - پیام خطا: %s', $http_status, $result->error_code, $result->error_message);
         } else {
             // Add a specific history to the order with order status 1 (Pending);
             $model->addOrderHistory($order_id, 1, 'IDPay Transaction ID: '. $result->id, false);
