@@ -58,7 +58,7 @@ class ControllerExtensionPaymentIdpay extends Controller
             'callback' => $callback,
         );
 
-        $ch = curl_init('https://api.idpay.ir/v1/payment');
+        $ch = curl_init('https://api.idpay.ir/v1.1/payment');
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($idpay_data));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -139,7 +139,7 @@ class ControllerExtensionPaymentIdpay extends Controller
                 );
 
                 $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, 'https://api.idpay.ir/v1/payment/inquiry');
+                curl_setopt($ch, CURLOPT_URL, 'https://api.idpay.ir/v1.1/payment/verify');
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($idpay_data));
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
