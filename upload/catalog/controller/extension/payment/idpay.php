@@ -49,11 +49,17 @@ class ControllerExtensionPaymentIdpay extends Controller
         if (empty($amount)) {
             $json['error'] = 'واحد پول انتخاب شده پشتیبانی نمی شود.';
         }
+        // Customer information
+        $name = $order_info['firstname'] . ' ' . $order_info['lastname'];
+        $mail = $order_info['email'];
+        $phone = $order_info['telephone'];
 
         $idpay_data = array(
             'order_id' => $order_id,
             'amount' => $amount,
-            'phone' => isset($order_info['telephone']) ? $order_info['telephone'] : "",
+            'name' => $name,
+            'phone' => $phone,
+            'mail'     => $mail,
             'desc' => $desc,
             'callback' => $callback,
         );
