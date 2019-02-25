@@ -239,7 +239,7 @@ class ControllerExtensionPaymentIdpay extends Controller
     {
         $amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
         $amount = round($amount);
-        $amount = $this->currency->convert($amount, $order_info['currency_code'], "IRR");
+        $amount = $this->currency->convert($amount, $order_info['currency_code'], "RLS");
         return (int)$amount;
     }
 }
