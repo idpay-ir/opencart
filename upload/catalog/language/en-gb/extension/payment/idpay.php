@@ -10,7 +10,7 @@
  * http://idpay.ir
  */
 $_['text_wait'] = 'Please Wait!';
-$_['text_connect'] = 'Connecting To idpay!';
+$_['text_connect'] = 'Connecting To IDPay!';
 $_['text_results'] = 'idpay Ref No : ';
 $_['text_order_no'] = 'خرید شماره: ';
 $_['button_view_cart'] = 'View Shopping Cart';

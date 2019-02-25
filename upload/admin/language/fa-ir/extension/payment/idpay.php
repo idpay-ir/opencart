@@ -17,7 +17,7 @@ $_['text_idpay'] = '<a target="_blank" href="https://idpay.ir/"><img src="view/i
 $_['text_edit'] = 'ویرایش پرداخت آنلاین IDPay';
 $_['entry_title'] = 'عنوان';
 $_['entry_api_key'] = 'API KEY';
-$_['entry_order_status'] = 'وضعیت سفارش';
+$_['entry_order_status'] = 'وضعیت سفارش پس از پرداخت موفق';
 $_['entry_sandbox'] = 'آزمایشگاه';
 $_['entry_sandbox_yes'] = 'بله';
 $_['entry_sandbox_no'] = 'خیر';

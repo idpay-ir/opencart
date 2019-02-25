@@ -10,8 +10,8 @@
  * http://idpay.ir
  */
 $_['text_wait'] = 'لطفا صبر نمایید!';
-$_['text_connect'] = 'در حال اتصال به درگاه پی‌پینگ!';
-$_['text_results'] = 'رسید پی‌پینگ : ';
+$_['text_connect'] = 'در حال اتصال به درگاه آیدی پی';
+$_['text_results'] = 'رسید آیدی پی : ';
 $_['text_order_no'] = 'خرید شماره: ';
 $_['button_view_cart'] = 'مشاهده سبد خرید';
 $_['button_complete'] = 'تکمیل پرداخت';
