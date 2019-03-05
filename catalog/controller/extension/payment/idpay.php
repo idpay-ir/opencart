@@ -5,7 +5,7 @@ class ControllerExtensionPaymentIDPay extends Controller
 	public function index()
 	{
 
-        $this->load->language('payment/idpay');
+        $this->load->language('extension/payment/idpay');
         $this->load->model('checkout/order');
 
         /** @var \ModelCheckoutOrder $model */
@@ -65,8 +65,7 @@ class ControllerExtensionPaymentIDPay extends Controller
 
 
             if ($http_status != 201 || empty($result) || empty($result->id) || empty($result->link)) {
-                //$data['error_warning'] = sprintf($this->language->get('error_create_payment'), $http_status, $result->error_code, $result->error_message);
-                $data['error_warning'] = $result->error_message;
+                $data['error_warning'] = sprintf($this->language->get('error_create_payment'), $http_status, $result->error_code, $result->error_message);
             }
 
             else {
@@ -90,7 +89,7 @@ class ControllerExtensionPaymentIDPay extends Controller
 
 	public function callback()
 	{
-		$this->load->language('payment/idpay');
+		$this->load->language('extension/payment/idpay');
 		$this->load->model('checkout/order');
 
 		/** @var \ModelCheckoutOrder $model */
