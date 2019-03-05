@@ -1,32 +1,34 @@
 <?php
-/**
- * IDPay payment gateway
- *
- * @developer JMDMahdi
- * @publisher IDPay
- * @copyright (C) 2018 IDPay
- * @license http://www.gnu.org/licenses/gpl-2.0.html GPLv2 or later
- *
- * http://idpay.ir
- */
-$_['text_title'] = 'IDPay Online Payment';
-$_['heading_title'] = 'IDPay';
-$_['text_extension'] = 'Extensions';
-$_['text_success'] = 'Success : Modificaions was successfully done!';
-$_['text_idpay'] = '<a target="_blank" href="https://idpay.ir/"><img src="view/image/payment/idpay.png" alt="IDPay" title="IDPay" style="width: 120px"></a>';
-$_['text_edit'] = 'Edit IDPay Online Payment';
-$_['entry_title'] = 'Payment Title';
-$_['entry_api_key'] = 'API KEY';
-$_['entry_order_status'] = 'Order Status';
-$_['entry_sandbox'] = 'sandbox';
-$_['entry_sandbox_yes'] = 'Yes';
-$_['entry_sandbox_no'] = 'No';
-$_['entry_success_massage'] = 'Success Massage';
-$_['entry_success_massage_default'] = 'پرداخت شما ناموفق بوده است. لطفا مجددا تلاش نمایید یا در صورت بروز اشکال با مدیر سایت تماس بگیرید.';
-$_['entry_failed_massage_default'] = 'پرداخت شما با موفقیت انجام شد. کد رهگیری: {track_id}';
-$_['entry_massage_help'] = 'متن پیامی که می خواهید بعد از پرداخت به کاربر نمایش دهید را وارد کنید. همچنین می توانید از شورت کدهای {order_id} برای نمایش شماره سفارش و {track_id} برای نمایش کد رهگیری آیدی پی استفاده نمایید.';
-$_['entry_failed_massage'] = 'Failed Massage';
-$_['entry_status'] = 'Status';
-$_['entry_sort_order'] = 'Sort Order';
-$_['error_permission'] = 'Warning: You do not have permission to modify IDPay payment extension!';
-$_['error_api_key'] = 'API KEY is required!';
+
+// Heading
+$_['heading_title'] = 'درگاه پرداخت آیدی پی';
+
+// Text
+$_['text_payment'] = 'پرداخت';
+$_['text_success'] = 'با موفقیت ویرایش شد!';
+$_['text_edit'] = 'ویرایش درگاه پرداخت آیدی پی';
+$_['text_idpay'] = '<a href="https://idpay.ir" target="_blank"><img src="view/image/payment/idpay.png" alt="IDPay.ir" title="IDPay.ir" style="border:1px solid #eee;" /></a>';
+$_['text_success_message'] = 'پیام پرداخت موفق:';
+$_['text_failed_message'] = 'پیام پرداخت ناموفق:';
+$_['text_api_key'] = 'API Key';
+$_['text_status'] = 'وضعیت درگاه:';
+$_['text_order_status'] = 'وضعیت سفارش پس از پرداخت موفق:';
+$_['text_sort_order'] = 'ترتیب:';
+$_['text_sandbox'] = 'آزمایشگاه:';
+$_['text_sandbox_help'] = 'برای شبیه‌سازی پرداخت در درگاه آیدی پی،‌ می‌توانید این گزینه را بر روی بله قرار دهید. اما در محیط‌های واقعی و سایت اصلی، بایستی گزینه آزمایشگاه بر روی خیر قرار گیرد تا پرداخت‌ها به صورت واقعی انجام شوند.';
+$_['text_successful_message_help'] = 'متن پیامی که می خواهید بعد از پرداخت موفق به کاربر نمایش دهید را وارد کنید. همچنین می توانید از شورت کدهای {order_id} برای نمایش شماره سفارش و {track_id} برای نمایش کد رهگیری آیدی پی استفاده نمایید.';
+$_['text_failed_message_help'] = 'متن پیامی که می خواهید بعد از پرداخت ناموفق به کاربر نمایش دهید را وارد کنید. همچنین می توانید از شورت کدهای {order_id} برای نمایش شماره سفارش و {track_id} برای نمایش کد رهگیری آیدی پی استفاده نمایید.';
+
+// Entry
+$_['entry_payment_successful_message_default'] = 'پرداخت شما با موفقیت انجام شد. کد رهگیری: {track_id}';
+$_['entry_payment_failed_message_default'] = 'پرداخت شما ناموفق بوده است. لطفا مجددا تلاش نمایید یا در صورت بروز اشکال با مدیر سایت تماس بگیرید.';
+$_['entry_sandbox_yes'] = 'بله';
+$_['entry_sandbox_no'] = 'خیر';
+
+// Tab
+$_['tab_general'] = 'عمومی';
+
+// Error
+$_['error_permission'] = 'شما سطح دسترسی لازم برای ویرایش ماژول را ندارید.';
+$_['error_validate'] = 'متاسفانه خطایی در مقدار دهی فیلد ها رخ داده است.';
+$_['error_api_key'] = 'فیلد API Key الزامی است.';
