@@ -1,10 +1,10 @@
 <?php 
 
-class ModelExtensionPaymentIDPay extends Model
+class ModelPaymentIDPay extends Model
 {
 	public function getMethod($address)
 	{
-		$this->load->language('extension/payment/idpay');
+		$this->load->language('payment/idpay');
 
 		if ($this->config->get('idpay_status')) {
 

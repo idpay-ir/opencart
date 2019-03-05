@@ -1,6 +1,6 @@
 <?php
 
-class ControllerExtensionPaymentIDPay extends Controller
+class ControllerPaymentIDPay extends Controller
 {
 	public function index()
 	{
@@ -27,8 +27,7 @@ class ControllerExtensionPaymentIDPay extends Controller
 		if (extension_loaded('curl')) {
 
 			$api = $this->config->get('idpay_api_key');
-			//$callback = $this->url->link('extension/payment/idpay/callback', 'order_id=' . $encryption->encrypt($order_info['order_id']), '', 'SSL');
-			$callback = $this->url->link('extension/payment/idpay/callback', 'order_id=' . $order_info['order_id']);
+			$callback = $this->url->link('payment/idpay/callback', 'order_id=' . $encryption->encrypt($order_info['order_id']), '', 'SSL');
 
 			$order_id = $order_info['order_id'];
 			$desc = 'پرداخت سفارش ' . $order_info['order_id'];
@@ -65,8 +64,7 @@ class ControllerExtensionPaymentIDPay extends Controller
 
 
             if ($http_status != 201 || empty($result) || empty($result->id) || empty($result->link)) {
-                //$data['error_warning'] = sprintf($this->language->get('error_create_payment'), $http_status, $result->error_code, $result->error_message);
-                $data['error_warning'] = $result->error_message;
+                $data['error_warning'] = sprintf($this->language->get('error_create_payment'), $http_status, $result->error_code, $result->error_message);
             }
 
             else {
@@ -84,7 +82,7 @@ class ControllerExtensionPaymentIDPay extends Controller
 			$data['error_warning'] = $this->language->get('error_curl');
 		}
 
-		return $this->load->view('/extension/payment/idpay.tpl', $data);
+		return $this->load->view('payment/idpay.tpl', $data);
 
 	}
 
@@ -222,7 +220,7 @@ class ControllerExtensionPaymentIDPay extends Controller
         $data['header'] = $this->load->controller('common/header');
         $data['footer'] = $this->load->controller('common/footer');
 
-        $this->response->setOutput($this->load->view('/extension/payment/idpay_callback.tpl', $data));
+        $this->response->setOutput($this->load->view('payment/idpay_callback.tpl', $data));
 	}
 
     private function idpay_get_success_message($track_id, $order_id)
