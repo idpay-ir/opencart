@@ -27,7 +27,7 @@ class ControllerPaymentIDPay extends Controller
 		if (extension_loaded('curl')) {
 
 			$api = $this->config->get('idpay_api_key');
-			$callback = $this->url->link('payment/idpay/callback', 'order_id=' . $encryption->encrypt($order_info['order_id']), '', 'SSL');
+			$callback = $this->url->link('payment/idpay/callback', 'order_id=' . $order_info['order_id'], '', true);
 
 			$order_id = $order_info['order_id'];
 			$desc = 'پرداخت سفارش ' . $order_info['order_id'];
@@ -68,13 +68,6 @@ class ControllerPaymentIDPay extends Controller
             }
 
             else {
-                // Add some histories to the order with order status 1 (Pending);
-                $comment1 = sprintf($this->language->get('text_transaction_id'), $result->id);
-                $model->addOrderHistory($order_id, 1, $comment1, false);
-
-                $comment2 = $this->language->get('text_redirecting');
-                $model->addOrderHistory($order_id, 1, $comment2, false);
-
                 $data['action'] = $result->link;
             }
 
@@ -121,10 +114,9 @@ class ControllerPaymentIDPay extends Controller
         $date = empty($this->request->post['date']) ? NULL : $this->request->post['date'];
 
 
+
         if (!$order_info) {
             $comment = $this->idpay_get_failed_message($track_id, $order_id);
-            // Set Order status id to 10 (Failed) and add a history.
-            $model->addOrderHistory($order_id, 10, $comment, true);
             $data['error_warning'] = $comment;
             $data['button_continue'] = $this->language->get('button_view_cart');
             $data['continue'] = $this->url->link('checkout/cart');
@@ -133,8 +125,6 @@ class ControllerPaymentIDPay extends Controller
 
             if($status != 10) {
                 $comment = $this->idpay_get_failed_message($track_id, $order_id);
-                // Set Order status id to 10 (Failed) and add a history.
-                $model->addOrderHistory($order_id, 10, $comment, true);
                 $data['error_warning'] = $comment;
                 $data['button_continue'] = $this->language->get('button_view_cart');
                 $data['continue'] = $this->url->link('checkout/cart');
@@ -162,8 +152,6 @@ class ControllerPaymentIDPay extends Controller
                 curl_close($ch);
                 if ($http_status != 200) {
                     $comment = sprintf($this->language->get('error_verify_payment'), $http_status, $result->error_code, $result->error_message);
-                    // Set Order status id to 10 (Failed) and add a history.
-                    $model->addOrderHistory($order_id, 10, $comment, true);
                     $data['error_warning'] = $comment;
                     $data['button_continue'] = $this->language->get('button_view_cart');
                     $data['continue'] = $this->url->link('checkout/cart');
@@ -175,8 +163,6 @@ class ControllerPaymentIDPay extends Controller
                     $verify_amount = empty($result->amount) ? NULL : $result->amount;
                     if (empty($verify_status) || empty($verify_track_id) || empty($verify_amount) || $verify_amount != $amount || $verify_status < 100) {
                         $comment = $this->idpay_get_failed_message($verify_track_id, $verify_order_id);
-                        // Set Order status id to 10 (Failed) and add a history.
-                        $model->addOrderHistory($order_id, 10, $comment, true);
                         $data['error_warning'] = $comment;
                         $data['button_continue'] = $this->language->get('button_view_cart');
                         $data['continue'] = $this->url->link('checkout/cart');
@@ -185,9 +171,6 @@ class ControllerPaymentIDPay extends Controller
                         $config_successful_payment_status = $this->config->get('idpay_order_status_id');
                         // Set Order status id to the configured status id and add a history.
                         $model->addOrderHistory($verify_order_id, $config_successful_payment_status , $comment, true);
-                        // Add another history.
-                        $comment2 = 'Status: ' . $result->status .' - Track id: ' . $result->track_id . ' - Card no: ' . $result->payment->card_no;
-                        $model->addOrderHistory($verify_order_id, $config_successful_payment_status , $comment2, true);
                         $data['payment_result'] = $comment;
                         $data['button_continue'] = $this->language->get('button_complete');
                         $data['continue'] = $this->url->link('checkout/success');
