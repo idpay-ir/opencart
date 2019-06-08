@@ -81,6 +81,10 @@ class ControllerPaymentIDPay extends Controller
 
 	public function callback()
 	{
+		if ($this->session->data['payment_method']['code'] != 'idpay') {
+            return;
+        }
+
 		$this->load->language('payment/idpay');
 		$this->load->model('checkout/order');
 
@@ -95,14 +99,15 @@ class ControllerPaymentIDPay extends Controller
 		$order_id = isset($this->session->data['order_id']) ? $this->session->data['order_id'] : false;
 		$order_id = isset($order_id) ? $order_id : $encryption->decrypt($this->request->get['order_id']);
 
-		$order_info = $model->getOrder($order_id);
+        $order_info = $model->getOrder($order_id);
 
 		$data['heading_title'] = $this->language->get('heading_title');
 
 		$data['button_continue'] = $this->language->get('button_continue');
 		$data['continue']        = $this->url->link('common/home', '', 'SSL');
 
-		$data['error_warning'] = '';
+        $data['error_warning'] = '';
+        $data['payment_result'] = '';
 
 
         $status = empty($this->request->post['status']) ? NULL : $this->request->post['status'];
@@ -114,14 +119,19 @@ class ControllerPaymentIDPay extends Controller
         $date = empty($this->request->post['date']) ? NULL : $this->request->post['date'];
 
 
-
         if (!$order_info) {
             $comment = $this->idpay_get_failed_message($track_id, $order_id);
             $data['error_warning'] = $comment;
             $data['button_continue'] = $this->language->get('button_view_cart');
             $data['continue'] = $this->url->link('checkout/cart');
 
-        } else {
+        }
+        elseif ($order_info['order_status_id'] != 0) {
+            $data['error_warning'] = 'فرآیند پرداخت قبلاً انجام شده است.';
+            $data['button_continue'] = $this->language->get('button_view_cart');
+            $data['continue'] = $this->url->link('checkout/cart');
+        }
+        else {
 
             if($status != 10) {
                 $comment = $this->idpay_get_failed_message($track_id, $order_id);
