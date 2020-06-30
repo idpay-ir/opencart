@@ -29,7 +29,6 @@ class ControllerExtensionPaymentIdpay extends Controller
         $data['text_connect'] = $this->language->get('text_connect');
         $data['text_loading'] = $this->language->get('text_loading');
         $data['text_wait'] = $this->language->get('text_wait');
-
         $data['button_confirm'] = $this->language->get('button_confirm');
 
         return $this->load->view('extension/payment/idpay', $data);
@@ -92,13 +91,12 @@ class ControllerExtensionPaymentIdpay extends Controller
         if ($http_status != 201 || empty($result) || empty($result->id) || empty($result->link)) {
             // Set Order status id to 10 (Failed) and add a history.
             $msg = sprintf('خطا هنگام ایجاد تراکنش. وضعیت خطا: %s - کد خطا: %s - پیام خطا: %s', $http_status, $result->error_code, $result->error_message);
-            $model->addOrderHistory($order_id, 10,$msg, true);
+            $model->addOrderHistory($order_id, 10, $msg, true);
             $json['error'] = $msg;
         } else {
             // Add a specific history to the order with order status 1 (Pending);
             $model->addOrderHistory($order_id, 1, $this->generateString($result->id), false);
             $model->addOrderHistory($order_id, 1, 'در حال هدایت به درگاه پرداخت آیدی پی', false);
-
             $data['action'] = $result->link;
             $json['success'] = $data['action'];
         }
@@ -137,13 +135,10 @@ class ControllerExtensionPaymentIdpay extends Controller
 
 
             if ($this->session->data['order_id'] != $order_id) {
-
-              $comment =  'شماره سفارش اشتباه است.';;
-              // Set Order status id to 10 (Failed) and add a history.
-              $model->addOrderHistory($order_id, 10, $comment, true);
-              $data['peyment_result'] = $comment;
-              $data['button_continue'] = $this->language->get('button_view_cart');
-              $data['continue'] = $this->url->link('checkout/cart');
+                $comment = 'شماره سفارش اشتباه است.';
+                $data['peyment_result'] = $comment;
+                $data['button_continue'] = $this->language->get('button_view_cart');
+                $data['continue'] = $this->url->link('checkout/cart');
             } else {
                 $this->load->model('checkout/order');
 
@@ -234,7 +229,7 @@ class ControllerExtensionPaymentIdpay extends Controller
                                 // Set Order status id to the configured status id and add a history.
                                 $model->addOrderHistory($verify_order_id, $config_successful_payment_status, $comment, true);
                                 // Add another history.
-                                $comment2 = 'status: ' . $result->status . ' - track id: ' . $result->track_id . ' - card no: ' . $result->payment->card_no. ' - hashed card no: ' . $result->payment->hashed_card_no;
+                                $comment2 = 'status: ' . $result->status . ' - track id: ' . $result->track_id . ' - card no: ' . $result->payment->card_no . ' - hashed card no: ' . $result->payment->hashed_card_no;
                                 $model->addOrderHistory($verify_order_id, $config_successful_payment_status, $comment2, true);
                                 $data['peyment_result'] = $comment;
                                 $data['button_continue'] = $this->language->get('button_complete');
@@ -272,7 +267,7 @@ class ControllerExtensionPaymentIdpay extends Controller
         return str_replace(["{track_id}", "{order_id}"], [$track_id, $order_id], $this->config->get('payment_idpay_success_massage'));
     }
 
-    public function idpay_get_failed_message($track_id, $order_id, $msgNumber=null)
+    public function idpay_get_failed_message($track_id, $order_id, $msgNumber = null)
     {
         $msg = $this->otherStatusMessages($msgNumber);
         return str_replace(["{track_id}", "{order_id}"], [$track_id, $order_id], $this->config->get('payment_idpay_failed_massage')) . "<br>" . "$msg";
@@ -335,7 +330,6 @@ class ControllerExtensionPaymentIdpay extends Controller
         return $msg . ' -وضعیت: ' . "$msgNumber";
 
     }
-
 
 }
 
