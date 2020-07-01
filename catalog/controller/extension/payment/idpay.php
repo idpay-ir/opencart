@@ -2,7 +2,6 @@
 
 class ControllerExtensionPaymentIDPay extends Controller
 {
-
     public function generateString($id)
     {
         return 'IDPay Transaction ID: ' . $id;
