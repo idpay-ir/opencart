@@ -12,7 +12,7 @@
         <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?></div>
       <?php endif; ?>
 
-      <?php if ($payment_result) : ?>
+      <?php if (isset($payment_result)) : ?>
         <div class="alert alert-info"><i class="fa fa-check-circle"></i><?php echo $payment_result ?></div>
       <?php endif; ?>
 
@@ -22,4 +22,5 @@
     </div>
   </div>
 </div>
+
 <?php echo $footer; ?>

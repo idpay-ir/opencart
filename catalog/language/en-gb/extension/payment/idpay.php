@@ -4,7 +4,7 @@
 $_['heading_title'] = 'درگاه پرداخت آیدی پی';
 
 // Text
-$_['text_title'] = 'درگاه پرداخت آیدی پی';
+$_['text_title'] = 'پرداخت امن با آیدی پی';
 $_['text_basket'] = 'سبد خرید';
 $_['text_checkout'] = 'تسویه حساب';
 $_['text_transaction'] = 'شماره تراکنش: ';
