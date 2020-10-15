@@ -10,16 +10,16 @@
       <h1><?php echo $heading_title; ?></h1>
       <ul class="breadcrumb">
         <?php foreach ($breadcrumbs as $breadcrumb) : ?>
-          <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
+        <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
         <?php endforeach; ?>
       </ul>
     </div>
   </div>
   <div class="container-fluid">
     <?php if ($error_warning) : ?>
-      <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
-      </div>
+    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
     <?php endif; ?>
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -37,11 +37,11 @@
                 <div class="col-sm-10">
                   <select name="idpay_status" class="form-control">
                     <?php if ($idpay_status) : ?>
-                      <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
-                      <option value="0"><?php echo $text_disabled; ?></option>
+                    <option value="1" selected="selected"><?php echo $text_enabled; ?></option>
+                    <option value="0"><?php echo $text_disabled; ?></option>
                     <?php else : ?>
-                      <option value="1"><?php echo $text_enabled; ?></option>
-                      <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
+                    <option value="1"><?php echo $text_enabled; ?></option>
+                    <option value="0" selected="selected"><?php echo $text_disabled; ?></option>
                     <?php endif; ?>
                   </select>
                 </div>
@@ -50,8 +50,8 @@
                 <label class="col-sm-2 control-label" for="idpay_api_key"><?php echo $text_api_key; ?></label>
                 <div class="col-sm-10">
                   <input name="idpay_api_key" type="text" value="<?php echo $idpay_api_key; ?>" class="form-control" />
-                  <?php if ($error_api_key) : ?>
-                    <div class="text-danger"><?php echo $error_api_key; ?></div>
+                  <?php if (isset($error_api_key)) : ?>
+                  <div class="text-danger"><?php echo $error_api_key; ?></div>
                   <?php endif; ?>
                 </div>
               </div>
@@ -84,11 +84,11 @@
                 <div class="col-sm-10">
                   <select name="idpay_order_status_id" class="form-control">
                     <?php foreach ($order_statuses as $order_status) : ?>
-                      <?php if ($order_status['order_status_id'] == $idpay_order_status_id) : ?>
-                        <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
-                      <?php else : ?>
-                        <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
-                      <?php endif; ?>
+                    <?php if ($order_status['order_status_id'] == $idpay_order_status_id) : ?>
+                    <option value="<?php echo $order_status['order_status_id']; ?>" selected="selected"><?php echo $order_status['name']; ?></option>
+                    <?php else : ?>
+                    <option value="<?php echo $order_status['order_status_id']; ?>"><?php echo $order_status['name']; ?></option>
+                    <?php endif; ?>
                     <?php endforeach; ?>
                   </select>
                 </div>

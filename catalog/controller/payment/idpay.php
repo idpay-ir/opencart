@@ -2,8 +2,13 @@
 
 class ControllerPaymentIDPay extends Controller
 {
-	public function index()
-	{
+    public function generateString($id)
+    {
+        return 'IDPay Transaction ID: ' . $id;
+    }
+
+    public function index()
+    {
 
         $this->load->language('payment/idpay');
         $this->load->model('checkout/order');
@@ -24,13 +29,13 @@ class ControllerPaymentIDPay extends Controller
 
         $data['error_warning'] = false;
 
-		if (extension_loaded('curl')) {
+        if (extension_loaded('curl')) {
 
-			$api = $this->config->get('idpay_api_key');
-			$callback = $this->url->link('payment/idpay/callback', 'order_id=' . $order_info['order_id'], '', true);
+            $api = $this->config->get('idpay_api_key');
+            $callback = $this->url->link('payment/idpay/callback', 'order_id=' . $order_info['order_id'], '', true);
 
-			$order_id = $order_info['order_id'];
-			$desc = 'پرداخت سفارش ' . $order_info['order_id'];
+            $order_id = $order_info['order_id'];
+            $desc = 'پرداخت سفارش ' . $order_info['order_id'];
 
             // Customer information
             $name = $order_info['firstname'] . ' ' . $order_info['lastname'];
@@ -64,47 +69,51 @@ class ControllerPaymentIDPay extends Controller
 
 
             if ($http_status != 201 || empty($result) || empty($result->id) || empty($result->link)) {
-                $data['error_warning'] = sprintf($this->language->get('error_create_payment'), $http_status, $result->error_code, $result->error_message);
+                $msg = sprintf($this->language->get('error_create_payment'), $http_status, $result->error_code, $result->error_message);
+                $data['error_warning'] = $msg;
+                $model->addOrderHistory($order_id, 10, $msg, true);
             }
 
             else {
+                $model->addOrderHistory($order_id, 1, $this->generateString($result->id), false);
+                $model->addOrderHistory($order_id, 1, 'در حال هدایت به درگاه پرداخت آیدی پی', false);
                 $data['action'] = $result->link;
             }
 
-		} else {
-			$data['error_warning'] = $this->language->get('error_curl');
-		}
+        } else {
+            $data['error_warning'] = $this->language->get('error_curl');
+        }
 
-		return $this->load->view('payment/idpay.tpl', $data);
+        return $this->load->view('payment/idpay.tpl', $data);
 
-	}
+    }
 
-	public function callback()
-	{
-		if ($this->session->data['payment_method']['code'] != 'idpay') {
+    public function callback()
+    {
+        if ($this->session->data['payment_method']['code'] != 'idpay') {
             return;
         }
 
-		$this->load->language('payment/idpay');
-		$this->load->model('checkout/order');
+        $this->load->language('payment/idpay');
+        $this->load->model('checkout/order');
 
-		/** @var \ModelCheckoutOrder $model */
+        /** @var \ModelCheckoutOrder $model */
         $model = $this->model_checkout_order;
 
-		$this->document->setTitle($this->language->get('heading_title'));
+        $this->document->setTitle($this->language->get('heading_title'));
         $sandbox = $this->config->get('idpay_sandbox') == 'yes' ? 'true' : 'false';
 
-		$encryption = new Encryption($this->config->get('config_encryption'));
+        $encryption = new Encryption($this->config->get('config_encryption'));
 
-		$order_id = isset($this->session->data['order_id']) ? $this->session->data['order_id'] : false;
-		$order_id = isset($order_id) ? $order_id : $encryption->decrypt($this->request->get['order_id']);
+        $order_id = isset($this->session->data['order_id']) ? $this->session->data['order_id'] : false;
+        $order_id = isset($order_id) ? $order_id : $encryption->decrypt($this->request->get['order_id']);
 
         $order_info = $model->getOrder($order_id);
 
-		$data['heading_title'] = $this->language->get('heading_title');
+        $data['heading_title'] = $this->language->get('heading_title');
 
-		$data['button_continue'] = $this->language->get('button_continue');
-		$data['continue']        = $this->url->link('common/home', '', 'SSL');
+        $data['button_continue'] = $this->language->get('button_continue');
+        $data['continue']        = $this->url->link('common/home', '', 'SSL');
 
         $data['error_warning'] = '';
         $data['payment_result'] = '';
@@ -118,23 +127,16 @@ class ControllerPaymentIDPay extends Controller
         $card_no = empty($this->request->post['card_no']) ? NULL : $this->request->post['card_no'];
         $date = empty($this->request->post['date']) ? NULL : $this->request->post['date'];
 
-
         if (!$order_info) {
             $comment = $this->idpay_get_failed_message($track_id, $order_id);
+            $model->addOrderHistory($order_id, 10, $this->otherStatusMessages(), true);
             $data['error_warning'] = $comment;
             $data['button_continue'] = $this->language->get('button_view_cart');
             $data['continue'] = $this->url->link('checkout/cart');
-
-        }
-        elseif ($order_info['order_status_id'] != 0) {
-            $data['error_warning'] = 'فرآیند پرداخت قبلاً انجام شده است.';
-            $data['button_continue'] = $this->language->get('button_view_cart');
-            $data['continue'] = $this->url->link('checkout/cart');
-        }
-        else {
-
+        }else {
             if($status != 10) {
-                $comment = $this->idpay_get_failed_message($track_id, $order_id);
+                $comment = $this->idpay_get_failed_message($track_id, $order_id, $status);
+                $model->addOrderHistory($order_id, 10, $this->otherStatusMessages($status), true);
                 $data['error_warning'] = $comment;
                 $data['button_continue'] = $this->language->get('button_view_cart');
                 $data['continue'] = $this->url->link('checkout/cart');
@@ -162,6 +164,8 @@ class ControllerPaymentIDPay extends Controller
                 curl_close($ch);
                 if ($http_status != 200) {
                     $comment = sprintf($this->language->get('error_verify_payment'), $http_status, $result->error_code, $result->error_message);
+                    // Set Order status id to 10 (Failed) and add a history.
+                    $model->addOrderHistory($order_id, 10, $comment, true);
                     $data['error_warning'] = $comment;
                     $data['button_continue'] = $this->language->get('button_view_cart');
                     $data['continue'] = $this->url->link('checkout/cart');
@@ -171,16 +175,34 @@ class ControllerPaymentIDPay extends Controller
                     $verify_track_id = empty($result->track_id) ? NULL : $result->track_id;
                     $verify_order_id = empty($result->order_id) ? NULL : $result->order_id;
                     $verify_amount = empty($result->amount) ? NULL : $result->amount;
+
+                    //get result id from database
+                    $sql = $this->db->query('SELECT `comment`  FROM ' . DB_PREFIX . 'order_history WHERE order_id = ' . $order_id . ' AND `comment` LIKE "' . $this->generateString($result->id) . '"');
+
                     if (empty($verify_status) || empty($verify_track_id) || empty($verify_amount) || $verify_amount != $amount || $verify_status < 100) {
                         $comment = $this->idpay_get_failed_message($verify_track_id, $verify_order_id);
+                        //Set Order status id to 10 (Failed) and add a history.
+                        $model->addOrderHistory($order_id, 10, $comment, true);
                         $data['error_warning'] = $comment;
                         $data['button_continue'] = $this->language->get('button_view_cart');
                         $data['continue'] = $this->url->link('checkout/cart');
-                    } else { // Transaction is successful.
+                    }elseif ($order_id !== $result->order_id or count($sql->row) == 0) {
+                        //check double spending
+                        $comment = $this->idpay_get_failed_message($track_id, $order_id, 0);
+                        $model->addOrderHistory($order_id, 10, $this->otherStatusMessages($status), true);
+                        $data['error_warning'] = $comment;
+                        $data['button_continue'] = $this->language->get('button_view_cart');
+                        $data['continue'] = $this->url->link('checkout/cart');
+                    }
+
+                    else { // Transaction is successful.
                         $comment = $this->idpay_get_success_message($verify_track_id, $verify_order_id);
                         $config_successful_payment_status = $this->config->get('idpay_order_status_id');
                         // Set Order status id to the configured status id and add a history.
                         $model->addOrderHistory($verify_order_id, $config_successful_payment_status , $comment, true);
+                        // Add another history.
+                        $comment2 = 'status: ' . $result->status . ' - track id: ' . $result->track_id . ' - card no: ' . $result->payment->card_no . ' - hashed card no: ' . $result->payment->hashed_card_no;
+                        $model->addOrderHistory($verify_order_id, $config_successful_payment_status, $comment2, FALSE);
                         $data['payment_result'] = $comment;
                         $data['button_continue'] = $this->language->get('button_complete');
                         $data['continue'] = $this->url->link('checkout/success');
@@ -214,17 +236,35 @@ class ControllerPaymentIDPay extends Controller
         $data['footer'] = $this->load->controller('common/footer');
 
         $this->response->setOutput($this->load->view('payment/idpay_callback.tpl', $data));
-	}
+    }
 
+    /**
+     * @param $track_id
+     * @param $order_id
+     * @return mixed
+     */
     private function idpay_get_success_message($track_id, $order_id)
     {
         return str_replace(["{track_id}", "{order_id}"], [$track_id, $order_id], $this->config->get('idpay_payment_successful_message'));
     }
-    private function idpay_get_failed_message($track_id, $order_id)
-    {
-        return str_replace(["{track_id}", "{order_id}"], [$track_id, $order_id], $this->config->get('idpay_payment_failed_message'));
 
+    /**
+     * @param $track_id
+     * @param $order_id
+     * @param null $msgNumber
+     * @return string
+     */
+    private function idpay_get_failed_message($track_id, $order_id, $msgNumber = null)
+    {
+        $msg = $this->otherStatusMessages($msgNumber);
+        $msg = str_replace(["{track_id}", "{order_id}"], [$track_id, $order_id], $this->config->get('idpay_payment_failed_message')) ."<br>".$msg;
+        return $msg;
     }
+
+    /**
+     * @param $order_info
+     * @return int
+     */
     private function correctAmount($order_info)
     {
         $amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
@@ -232,5 +272,62 @@ class ControllerPaymentIDPay extends Controller
         $amount = $this->currency->convert($amount, $order_info['currency_code'], "RLS");
         return (int)$amount;
     }
-}
 
+    /**
+     * @param null $msgNumber
+     * @return string
+     */
+    public function otherStatusMessages($msgNumber = null)
+    {
+
+        switch ($msgNumber) {
+            case "1":
+                $msg = "پرداخت انجام نشده است";
+                break;
+            case "2":
+                $msg = "پرداخت ناموفق بوده است";
+                break;
+            case "3":
+                $msg = "خطا رخ داده است";
+                break;
+            case "3":
+                $msg = "بلوکه شده";
+                break;
+            case "5":
+                $msg = "برگشت به پرداخت کننده";
+                break;
+            case "6":
+                $msg = "برگشت خورده سیستمی";
+                break;
+            case "7":
+                $msg = "انصراف از پرداخت";
+                break;
+            case "8":
+                $msg = "به درگاه پرداخت منتقل شد";
+                break;
+            case "10":
+                $msg = "در انتظار تایید پرداخت";
+                break;
+            case "100":
+                $msg = "پرداخت تایید شده است";
+                break;
+            case "101":
+                $msg = "پرداخت قبلا تایید شده است";
+                break;
+            case "200":
+                $msg = "به دریافت کننده واریز شد";
+                break;
+            case "0":
+                $msg = "سواستفاده از تراکنش قبلی";
+                break;
+            case null:
+                $msg = "خطا دور از انتظار";
+                $msgNumber = '1000';
+                break;
+        }
+
+        return $msg . ' -وضعیت: ' . "$msgNumber";
+
+    }
+
+}
