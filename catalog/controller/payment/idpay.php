@@ -2,11 +2,18 @@
 
 class ControllerPaymentIDPay extends Controller
 {
+    /**
+     * @param $id
+     * @return string
+     */
     public function generateString($id)
     {
         return 'IDPay Transaction ID: ' . $id;
     }
 
+    /**
+     * @return mixed
+     */
     public function index()
     {
 
@@ -88,6 +95,9 @@ class ControllerPaymentIDPay extends Controller
 
     }
 
+    /**
+     * http request callback
+     */
     public function callback()
     {
         if ($this->session->data['payment_method']['code'] != 'idpay') {
@@ -118,14 +128,16 @@ class ControllerPaymentIDPay extends Controller
         $data['error_warning'] = '';
         $data['payment_result'] = '';
 
+        // Check method http request
+        $method = !empty($this->request->server['REQUEST_METHOD']) ? strtolower($this->request->server['REQUEST_METHOD']) : null;
+        if (empty($method)) {
+            die;
+        }
 
-        $status = empty($this->request->post['status']) ? NULL : $this->request->post['status'];
-        $track_id = empty($this->request->post['track_id']) ? NULL : $this->request->post['track_id'];
-        $id = empty($this->request->post['id']) ? NULL : $this->request->post['id'];
-        $order_id = empty($this->request->post['order_id']) ? NULL : $this->request->post['order_id'];
-        //$amount = empty($this->request->post['amount']) ? NULL : $this->request->post['amount'];
-        $card_no = empty($this->request->post['card_no']) ? NULL : $this->request->post['card_no'];
-        $date = empty($this->request->post['date']) ? NULL : $this->request->post['date'];
+        $status = empty($this->request->{$method}['status']) ? NULL : $this->request->{$method}['status'];
+        $track_id = empty($this->request->{$method}['track_id']) ? NULL : $this->request->{$method}['track_id'];
+        $id = empty($this->request->{$method}['id']) ? NULL : $this->request->{$method}['id'];
+        $order_id = empty($this->request->{$method}['order_id']) ? NULL : $this->request->{$method}['order_id'];
 
         if (!$order_info) {
             $comment = $this->idpay_get_failed_message($track_id, $order_id);
