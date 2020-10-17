@@ -13,8 +13,14 @@
 
 class ControllerExtensionPaymentIdpay extends Controller
 {
+    /**
+     * @var array
+     */
     private $error = array();
 
+    /**
+     *  IDPay setting for admin
+     */
     public function index()
     {
         $this->load->language('extension/payment/idpay');
@@ -118,6 +124,9 @@ class ControllerExtensionPaymentIdpay extends Controller
         $this->response->setOutput($this->load->view('extension/payment/idpay', $data));
     }
 
+    /**
+     * @return bool
+     */
     protected function validate()
     {
         if (!$this->user->hasPermission('modify', 'extension/payment/idpay')) {
@@ -130,6 +139,7 @@ class ControllerExtensionPaymentIdpay extends Controller
 
         return !$this->error;
     }
+
 }
 
 ?>
