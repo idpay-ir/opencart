@@ -2,11 +2,18 @@
 
 class ControllerPaymentIDPay extends Controller
 {
+    /**
+     * @param $id
+     * @return string
+     */
     public function generateString($id)
     {
         return 'IDPay Transaction ID: ' . $id;
     }
 
+    /**
+     * @return mixed
+     */
     public function index()
     {
         $this->load->language('payment/idpay');
@@ -82,6 +89,9 @@ class ControllerPaymentIDPay extends Controller
         return $this->load->view('default/template/payment/idpay.tpl', $data);
     }
 
+    /**
+     * http request callback
+     */
     public function callback()
     {
         $this->load->language('payment/idpay');
@@ -104,13 +114,16 @@ class ControllerPaymentIDPay extends Controller
         $data['continue'] = $this->url->link('common/home', '', 'SSL');
         $data['error_warning'] = '';
 
-        $status = empty($this->request->post['status']) ? NULL : $this->request->post['status'];
-        $track_id = empty($this->request->post['track_id']) ? NULL : $this->request->post['track_id'];
-        $id = empty($this->request->post['id']) ? NULL : $this->request->post['id'];
-        $order_id = empty($this->request->post['order_id']) ? NULL : $this->request->post['order_id'];
-        //$amount = empty($this->request->post['amount']) ? NULL : $this->request->post['amount'];
-        $card_no = empty($this->request->post['card_no']) ? NULL : $this->request->post['card_no'];
-        $date = empty($this->request->post['date']) ? NULL : $this->request->post['date'];
+        // Check method http request
+        $method = !empty($this->request->server['REQUEST_METHOD']) ? strtolower($this->request->server['REQUEST_METHOD']) : null;
+        if (empty($method)) {
+            die;
+        }
+
+        $status = empty($this->request->{$method}['status']) ? NULL : $this->request->{$method}['status'];
+        $track_id = empty($this->request->{$method}['track_id']) ? NULL : $this->request->{$method}['track_id'];
+        $id = empty($this->request->{$method}['id']) ? NULL : $this->request->{$method}['id'];
+        $order_id = empty($this->request->{$method}['order_id']) ? NULL : $this->request->{$method}['order_id'];
 
         if (!$order_info) {
             $comment = $this->idpay_get_failed_message($track_id, $order_id);
@@ -218,11 +231,22 @@ class ControllerPaymentIDPay extends Controller
         $this->response->setOutput($this->load->view('default/template/payment/idpay_callback.tpl', $data));
     }
 
+    /**
+     * @param $track_id
+     * @param $order_id
+     * @return mixed
+     */
     private function idpay_get_success_message($track_id, $order_id)
     {
         return str_replace(["{track_id}", "{order_id}"], [$track_id, $order_id], $this->config->get('idpay_payment_successful_message'));
     }
 
+    /**
+     * @param $track_id
+     * @param $order_id
+     * @param null $msgNumber
+     * @return string
+     */
     private function idpay_get_failed_message($track_id, $order_id, $msgNumber = null)
     {
         $msg = $this->otherStatusMessages($msgNumber);
@@ -230,6 +254,10 @@ class ControllerPaymentIDPay extends Controller
         return $msg;
     }
 
+    /**
+     * @param $order_info
+     * @return int
+     */
     private function correctAmount($order_info)
     {
         $amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);

@@ -2,8 +2,14 @@
 
 class ControllerPaymentIDPay extends Controller
 {
+    /**
+     * @var array
+     */
 	private $error = array ();
 
+    /**
+     * IDpay setting
+     */
 	public function index()
 	{
 		$this->load->language('payment/idpay');
@@ -167,6 +173,9 @@ class ControllerPaymentIDPay extends Controller
         $this->response->setOutput($this->load->view('payment/idpay.tpl', $data));
 	}
 
+    /**
+     * @return bool
+     */
 	private function validate()
 	{
 		if (!$this->user->hasPermission('modify', 'payment/idpay')) {
@@ -189,4 +198,5 @@ class ControllerPaymentIDPay extends Controller
 			return false;
 		}
 	}
+
 }
