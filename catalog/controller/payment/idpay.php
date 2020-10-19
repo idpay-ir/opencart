@@ -38,8 +38,7 @@ class ControllerPaymentIDPay extends Controller
         if (extension_loaded('curl')) {
 
             $api = $this->config->get('idpay_api_key');
-            $callback = $this->url->link('payment/idpay/callback', 'order_id=' . $encryption->encrypt($order_info['order_id']), '', 'SSL');
-
+            $callback = $this->url->link('payment/idpay/callback', 'order_id=' . $order_info['order_id'], '', true);
             $order_id = $order_info['order_id'];
             $desc = 'پرداخت سفارش ' . $order_info['order_id'];
 
