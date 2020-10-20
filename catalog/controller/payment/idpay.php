@@ -302,7 +302,7 @@ class ControllerPaymentIDPay extends Controller
             case "3":
                 $msg = "خطا رخ داده است";
                 break;
-            case "3":
+            case "4":
                 $msg = "بلوکه شده";
                 break;
             case "5":
