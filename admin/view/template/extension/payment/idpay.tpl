@@ -50,7 +50,7 @@
                 <label class="col-sm-2 control-label" for="idpay_api_key"><?php echo $text_api_key; ?></label>
                 <div class="col-sm-10">
                   <input name="idpay_api_key" type="text" value="<?php echo $idpay_api_key; ?>" class="form-control" />
-                  <?php if ($error_api_key) : ?>
+                  <?php if (!empty($error_api_key)) : ?>
                     <div class="text-danger"><?php echo $error_api_key; ?></div>
                   <?php endif; ?>
                 </div>
