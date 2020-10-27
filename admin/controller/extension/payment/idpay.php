@@ -1,18 +1,26 @@
 <?php
+
 /**
  * IDPay payment gateway
  *
- * @developer JMDMahdi
+ * @developer JMDMahdi,vispa, mnbp1371
  * @publisher IDPay
  * @copyright (C) 2018 IDPay
  * @license http://www.gnu.org/licenses/gpl-2.0.html GPLv2 or later
  *
  * http://idpay.ir
  */
+
 class ControllerExtensionPaymentIdpay extends Controller
 {
+    /**
+     * @var array
+     */
     private $error = array();
 
+    /**
+     *  IDPay setting for admin
+     */
     public function index()
     {
         $this->load->language('extension/payment/idpay');
@@ -116,6 +124,9 @@ class ControllerExtensionPaymentIdpay extends Controller
         $this->response->setOutput($this->load->view('extension/payment/idpay', $data));
     }
 
+    /**
+     * @return bool
+     */
     protected function validate()
     {
         if (!$this->user->hasPermission('modify', 'extension/payment/idpay')) {
@@ -128,6 +139,7 @@ class ControllerExtensionPaymentIdpay extends Controller
 
         return !$this->error;
     }
+
 }
 
 ?>

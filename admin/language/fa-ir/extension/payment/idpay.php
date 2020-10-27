@@ -2,14 +2,14 @@
 /**
  * IDPay payment gateway
  *
- * @developer JMDMahdi
+ * @developer JMDMahdi, vispa, mnbp1371
  * @publisher IDPay
  * @copyright (C) 2018 IDPay
  * @license http://www.gnu.org/licenses/gpl-2.0.html GPLv2 or later
  *
  * http://idpay.ir
  */
-$_['text_title'] = 'پرداخت آنلاین IDPay';
+$_['text_title'] = ' پرداخت امن با آیدی پی';
 $_['heading_title'] = 'IDPay';
 $_['text_extension'] = 'افزونه ها';
 $_['text_success'] = 'ماژول پرداخت با موفقیت ویرایش شد!';
