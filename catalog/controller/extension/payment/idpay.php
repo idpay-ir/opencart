@@ -3,7 +3,7 @@
 /**
  * IDPay payment gateway
  *
- * @developer JMDMahdi
+ * @developer JMDMahdi,vispa, mnbp1371
  * @publisher IDPay
  * @copyright (C) 2018 IDPay
  * @license http://www.gnu.org/licenses/gpl-2.0.html GPLv2 or later
@@ -22,6 +22,9 @@ class ControllerExtensionPaymentIdpay extends Controller
         return 'IDPay Transaction ID: ' . $id;
     }
 
+    /**
+     * @return mixed
+     */
     public function index()
     {
         $this->load->language('extension/payment/idpay');
@@ -34,6 +37,9 @@ class ControllerExtensionPaymentIdpay extends Controller
         return $this->load->view('extension/payment/idpay', $data);
     }
 
+    /**
+     *
+     */
     public function confirm()
     {
         $this->load->language('extension/payment/idpay');
@@ -104,17 +110,23 @@ class ControllerExtensionPaymentIdpay extends Controller
         $this->response->setOutput(json_encode($json));
     }
 
+    /**
+     * http request callback
+     */
     public function callback()
     {
         if ($this->session->data['payment_method']['code'] == 'idpay') {
 
-            $status = empty($this->request->post['status']) ? NULL : $this->request->post['status'];
-            $track_id = empty($this->request->post['track_id']) ? NULL : $this->request->post['track_id'];
-            $id = empty($this->request->post['id']) ? NULL : $this->request->post['id'];
-            $order_id = empty($this->request->post['order_id']) ? NULL : $this->request->post['order_id'];
-            $amount = empty($this->request->post['amount']) ? NULL : $this->request->post['amount'];
-            $card_no = empty($this->request->post['card_no']) ? NULL : $this->request->post['card_no'];
-            $date = empty($this->request->post['date']) ? NULL : $this->request->post['date'];
+            // Check method http request
+            $method = !empty($this->request->server['REQUEST_METHOD']) ? strtolower($this->request->server['REQUEST_METHOD']) : null;
+            if (empty($method)) {
+                die;
+            }
+
+            $status = empty($this->request->{$method}['status']) ? NULL : $this->request->{$method}['status'];
+            $track_id = empty($this->request->{$method}['track_id']) ? NULL : $this->request->{$method}['track_id'];
+            $id = empty($this->request->{$method}['id']) ? NULL : $this->request->{$method}['id'];
+            $order_id = empty($this->request->{$method}['order_id']) ? NULL : $this->request->{$method}['order_id'];
 
             $this->load->language('extension/payment/idpay');
 
@@ -252,7 +264,10 @@ class ControllerExtensionPaymentIdpay extends Controller
         }
     }
 
-
+    /**
+     * @param $order_info
+     * @return int
+     */
     private function correctAmount($order_info)
     {
         $amount = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
@@ -262,11 +277,22 @@ class ControllerExtensionPaymentIdpay extends Controller
     }
 
 
+    /**
+     * @param $track_id
+     * @param $order_id
+     * @return mixed
+     */
     public function idpay_get_success_message($track_id, $order_id)
     {
         return str_replace(["{track_id}", "{order_id}"], [$track_id, $order_id], $this->config->get('payment_idpay_success_massage'));
     }
 
+    /**
+     * @param $track_id
+     * @param $order_id
+     * @param null $msgNumber
+     * @return string
+     */
     public function idpay_get_failed_message($track_id, $order_id, $msgNumber = null)
     {
         $msg = $this->otherStatusMessages($msgNumber);
@@ -291,7 +317,7 @@ class ControllerExtensionPaymentIdpay extends Controller
             case "3":
                 $msg = "خطا رخ داده است";
                 break;
-            case "3":
+            case "4":
                 $msg = "بلوکه شده";
                 break;
             case "5":
@@ -328,7 +354,6 @@ class ControllerExtensionPaymentIdpay extends Controller
         }
 
         return $msg . ' -وضعیت: ' . "$msgNumber";
-
     }
 
 }
